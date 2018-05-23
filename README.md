@@ -24,3 +24,11 @@ Self-explanatory, basic Faker data type and sub-type selection.
 ----
 
 For a complete list of fake data types, refer to the list here: https://www.npmjs.com/package/faker#api-methods
+
+----
+
+## TODO:
+
+* Better handling of the modifier argument (this should only show when an argument is able to passed to the Faker constructor).
+* Coercing of the modifier argument into the object type the Faker constructor is expecting.
+(Both of these items requires some way to know that what arguments and types the Faker constructor is expecting; if you know of a good way to figure this out, please let me know!)
