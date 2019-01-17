@@ -94,9 +94,20 @@ module.exports.templateTags = [{
         // Optional Format String
         var formatString = args.slice(-2)[0]
         if (formatString != "") {
-            return faker[type][subTypeValue](formatString);
+            try {
+                // Attempt to parse arguments as JSON object or list
+                return faker[type][subTypeValue](JSON.parse(formatString));
+            } catch (err) {
+                try {
+                    // Attempt to parse as list of arguments
+                    return faker[type][subTypeValue].apply(null, formatString.split(','));
+                } catch (err) {
+                    // Just send as a string
+                    return faker[type][subTypeValue](formatString);
+                }
+            }
         } else {
-            // Actual call out to Faker module
+            // Otherwise call out to Faker module without arguments
             return faker[type][subTypeValue]();
         }
     }

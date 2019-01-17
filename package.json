@@ -1,6 +1,6 @@
 {
   "name": "insomnia-plugin-faker",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Generate Faker values",
   "main": "index.js",
   "insomnia": {
