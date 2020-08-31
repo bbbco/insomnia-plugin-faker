@@ -69,7 +69,6 @@ module.exports.templateTags = [{
         {
             displayName: '(Optional) Modifier',
             type: 'string',
-            encoding : 'base64',
             description: 'Allows you to pass in a string that some types allow for more fine grained control over the output of the value. See http://marak.github.io/faker.js/faker.html for more info.'
         },
         {
