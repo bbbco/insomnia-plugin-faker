@@ -97,7 +97,7 @@ module.exports.templateTags = [{
         if (formatString != "") {
             try {
                 // Attempt to parse arguments as JSON object or list
-                return faker[type][subTypeValue](JSON.parse(formatString));
+                return faker[type][subTypeValue](...JSON.parse(`[${formatString}]`));
             } catch (err) {
                 try {
                     // Attempt to parse as list of arguments
