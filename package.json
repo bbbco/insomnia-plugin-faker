@@ -1,6 +1,6 @@
 {
   "name": "insomnia-plugin-faker",
-  "version": "1.0.2",
+  "version": "2.0.0",
   "description": "Generate Faker values",
   "main": "index.js",
   "insomnia": {
@@ -27,8 +27,8 @@
   },
   "homepage": "https://github.com/bbbco/insomnia-plugin-faker#readme",
   "dependencies": {
-    "faker": "^4.1.0",
-    "proper-case": "^1.0.5"
+    "faker": "^5.5.3",
+    "lodash": "^4.17.21"
   },
   "devDependencies": {},
   "scripts": {
