@@ -1,6 +1,5 @@
 var faker = require('faker');
-var isEmpty = require('lodash/isEmpty');
-var startCase = require('lodash/startCase');
+var properCase = require('proper-case');
 
 // List of all types of Fakers. We specify this explicitly since there is
 // no easy way to filter out these from the other objects on the faker module.
@@ -31,7 +30,7 @@ var fakerTypes = [
 function populateFakerOptions(someArray) {
   return someArray.sort().map(function(key) {
     return {
-      displayName: startCase(key),
+      displayName: properCase(key),
       value: key,
     };
   });
@@ -43,7 +42,7 @@ function populateFakerSubOptions() {
     var fakerTypeOptions = populateFakerOptions(Object.keys(faker[fakerType]));
 
     return {
-      displayName: startCase(fakerType),
+      displayName: properCase(fakerType),
       type: 'enum',
       defaultValue: '',
       options: fakerTypeOptions,
@@ -89,7 +88,7 @@ module.exports.templateTags = [{
     // Check to see if we have selected a Sub Type Value
     var subTypeValue = args[fakerTypeIndex];
     // If not, be sure to select the first value from the correct Faker Type
-    if (isEmpty(subTypeValue)) {
+    if (subTypeValue === '') {
       subTypeValue = this.args[fakerTypeIndex + 1].options[0].value;
     }
     // Setup faker locale for i18n support
@@ -98,7 +97,7 @@ module.exports.templateTags = [{
     // Optional Format String
     var formatString = args.slice(-2)[0];
 
-    if (!isEmpty(formatString)) {
+    if (!(formatString === '')) {
       try {
         // Attempt to parse arguments as JSON object or list
         return faker[type][subTypeValue](JSON.parse(formatString));

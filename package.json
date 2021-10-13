@@ -28,7 +28,7 @@
   "homepage": "https://github.com/bbbco/insomnia-plugin-faker#readme",
   "dependencies": {
     "faker": "^5.5.3",
-    "lodash": "^4.17.21"
+    "proper-case": "^1.0.5"
   },
   "devDependencies": {},
   "scripts": {
