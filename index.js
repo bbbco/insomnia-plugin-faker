@@ -1,23 +1,34 @@
-const faker = require("faker");
+const { faker } = require("@faker-js/faker");
 const properCase = require("proper-case");
 
 // List of all types of Fakers. We specify this explicitly since there is
 // no easy way to filter out these from the other objects on the faker module.
 const fakerTypes = [
   "address",
+  "animal",
+  "color",
   "commerce",
   "company",
   "database",
+  "datatype",
   "date",
   "finance",
+  "git",
   "hacker",
+  "helpers",
   "image",
   "internet",
   "lorem",
+  "mersenne",
+  "music",
   "name",
   "phone",
   "random",
+  "science",
   "system",
+  "unique",
+  "vehicle",
+  "word",
 ];
 
 // Creates the scaffolds for Enum options that Insomnia's Template Tags expect
@@ -33,7 +44,20 @@ populateFakerOptions = function (someArray) {
 // parent Type is selected
 populateFakerSubOptions = function () {
   return fakerTypes.map(function (fakerType) {
-    var fakerTypeOptions = populateFakerOptions(Object.keys(faker[fakerType]));
+    let objPropertyNames = Object.getOwnPropertyNames(faker[fakerType]).filter(
+      function (item) {
+        const funArray = ["length", "name"];
+        const objPropertyArray = Object.getOwnPropertyNames(
+          faker[fakerType][item]
+        );
+        return (
+          item != "faker" &&
+          objPropertyArray.length == funArray.length &&
+          objPropertyArray.every((v) => funArray.indexOf(v) >= 0)
+        );
+      }
+    );
+    const fakerTypeOptions = populateFakerOptions(objPropertyNames);
     return {
       displayName: properCase(fakerType),
       type: "enum",
@@ -75,7 +99,7 @@ module.exports.templateTags = [
           type: "string",
           encoding: "base64",
           description:
-            "Allows you to pass in a string that some types allow for more fine grained control over the output of the value. See http://marak.github.io/faker.js/faker.html for more info.",
+            "Allows you to pass in a string that some types allow for more fine grained control over the output of the value. See https://github.com/faker-js/faker for more info.",
         },
         {
           displayName: "Localization",
@@ -102,15 +126,32 @@ module.exports.templateTags = [
       if (formatString != "") {
         try {
           // Attempt to parse arguments as JSON object or list
-          return faker[type][subTypeValue](JSON.parse(formatString));
-        } catch (err) {
+          console.log(
+            `Attempting to parse as JSON object`,
+            JSON.parse(formatString)
+          );
+          const formattedString = JSON.parse(formatString);
+          try {
+            const formattedStringArray =
+              formattedString.constructor === Array
+                ? formattedString
+                : Array(formattedString);
+            return faker[type][subTypeValue].apply(null, formattedStringArray);
+          } catch (_err) {
+            return faker[type][subTypeValue](formattedString);
+          }
+        } catch (_err) {
           try {
             // Attempt to parse as list of arguments
+            console.log(
+              `Attempting to parse as list / array`,
+              formatString.split(",")
+            );
             return faker[type][subTypeValue].apply(
               null,
               formatString.split(",")
             );
-          } catch (err) {
+          } catch (_err) {
             // Just send as a string
             return faker[type][subTypeValue](formatString);
           }
