@@ -26,7 +26,6 @@ const fakerTypes = [
   "random",
   "science",
   "system",
-  "unique",
   "vehicle",
   "word",
 ];
@@ -95,7 +94,8 @@ module.exports.templateTags = [
       .concat(populateFakerSubOptions())
       .concat([
         {
-          displayName: "(Optional) Modifier",
+          displayName:
+            "(Optional) Modifier [see Faker docs for args usage; construct as JSON or list surrounded by square brackets]",
           type: "string",
           encoding: "base64",
           description:
@@ -108,7 +108,9 @@ module.exports.templateTags = [
           defaultValue: "en",
         },
       ]),
-    async run(context, type, ...args) {
+    async run(_context, type, ...args) {
+      let returnValue;
+
       // Since we dynamically generate the Faker Type Sub Options, we
       // don't know which argument its stored at, so lets look it up
       var fakerTypeIndex = fakerTypes.indexOf(type);
@@ -122,44 +124,57 @@ module.exports.templateTags = [
       var fakerLocale = args.slice(-1)[0];
       faker.locale = fakerLocale;
       // Optional Format String
-      var formatString = args.slice(-2)[0];
-      if (formatString != "") {
+      var optionalModifier = args.slice(-2)[0];
+      if (optionalModifier != "") {
         try {
           // Attempt to parse arguments as JSON object or list
-          console.log(
-            `Attempting to parse as JSON object`,
-            JSON.parse(formatString)
-          );
-          const formattedString = JSON.parse(formatString);
+          // console.log(
+          //   `Attempting to parse as JSON object`,
+          //   JSON.parse(optionalModifier)
+          // );
+          const optionalModifierObj = JSON.parse(optionalModifier);
+
           try {
-            const formattedStringArray =
-              formattedString.constructor === Array
-                ? formattedString
-                : Array(formattedString);
-            return faker[type][subTypeValue].apply(null, formattedStringArray);
+            // Try calling via .apply()
+            // .apply() takes second arg of array type, so format it as an Array if not already
+            const optionalModifierArray =
+              optionalModifierObj.constructor === Array
+                ? optionalModifierObj
+                : Array(optionalModifierObj);
+            returnValue = faker[type][subTypeValue].apply(
+              null,
+              optionalModifierArray
+            );
           } catch (_err) {
-            return faker[type][subTypeValue](formattedString);
+            // Otherwise, try calling directly with JSON parsed objects as arguments
+            returnValue = faker[type][subTypeValue](optionalModifierObj);
           }
         } catch (_err) {
           try {
             // Attempt to parse as list of arguments
-            console.log(
-              `Attempting to parse as list / array`,
-              formatString.split(",")
-            );
-            return faker[type][subTypeValue].apply(
+            // console.log(
+            //   `Attempting to parse as list / array`,
+            //   optionalModifier.split(",")
+            // );
+            returnValue = faker[type][subTypeValue].apply(
               null,
-              formatString.split(",")
+              optionalModifier.split(",")
             );
           } catch (_err) {
-            // Just send as a string
-            return faker[type][subTypeValue](formatString);
+            // If none of that works, just send optional modifier argument as a string
+            returnValue = faker[type][subTypeValue](optionalModifier);
           }
         }
       } else {
         // Otherwise call out to Faker module without arguments
-        return faker[type][subTypeValue]();
+        returnValue = faker[type][subTypeValue]();
       }
+
+      if (typeof returnValue !== "string") {
+        returnValue = JSON.stringify(returnValue);
+      }
+
+      return returnValue;
     },
   },
 ];
