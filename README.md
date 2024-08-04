@@ -1,5 +1,7 @@
 # insomnia-plugin-faker
 
+> WARNING: This plugin is no longer active due to the Faker library being completely integrated into [Insomnia 9.2](https://konghq.com/blog/product-releases/announcing-insomnia-9-2). Please only use this plugin with prior versions of the product.
+
 Generate Faker data right within the Insomnia REST Client!
 
 This plugin uses the community-driven [Faker NPM module](https://www.npmjs.com/package/@faker-js/faker) to generate "fake" data.
